@@ -33,63 +33,62 @@ import { PodcastsService } from './podcasts.service';
 @Resolver(() => Podcast)
 export class PodcastsResolver {
   constructor(private readonly podcastsService: PodcastsService) {}
-
   @Query(() => GetPodcastsOutput)
-  getPodcasts(): GetPodcastsOutput {
+  getPodcasts(): Promise<GetPodcastsOutput> {
     return this.podcastsService.getPodcasts();
   }
   @Mutation(() => CreatePodcastOutput)
   createPodcast(
     @Args('input') createPodcastInput: CreatePodcastInput,
-  ): CreatePodcastOutput {
+  ): Promise<CreatePodcastOutput> {
     return this.podcastsService.createPodcast(createPodcastInput);
   }
   @Query(() => GetPodcastOutput)
   getPodcast(
     @Args('input') getPodcastInput: GetPodcastInput,
-  ): GetPodcastOutput {
+  ): Promise<GetPodcastOutput> {
     return this.podcastsService.getPodcast(getPodcastInput);
   }
   @Mutation(() => DeletePodcastOutput)
   deletePodcast(
     @Args('input') deletePodcastInput: DeletePodcastInput,
-  ): DeletePodcastOutput {
+  ): Promise<DeletePodcastOutput> {
     return this.podcastsService.deletePodcast(deletePodcastInput);
   }
   @Mutation(() => UpdatePodcastOutput)
   updatePodcast(
     @Args('input') updatePodcastInput: UpdatePodcastInput,
-  ): UpdatePodcastOutput {
+  ): Promise<UpdatePodcastOutput> {
     return this.podcastsService.updatePodcast(updatePodcastInput);
   }
   @Query(() => GetEpisodesOutput)
   getEpisodes(
     @Args('input') getEpisodesInput: GetEpisodesInput,
-  ): GetEpisodesOutput {
+  ): Promise<GetEpisodesOutput> {
     return this.podcastsService.getEpisodes(getEpisodesInput);
   }
   @Mutation(() => CreateEpisodeOutput)
   createEpisode(
     @Args('input') createEpisodeInput: CreateEpisodeInput,
-  ): CreateEpisodeOutput {
+  ): Promise<CreateEpisodeOutput> {
     return this.podcastsService.createEpisode(createEpisodeInput);
   }
   @Mutation(() => DeleteEpisodeOutput)
   deleteEpisode(
     @Args('input') deleteEpisodeInput: DeleteEpisodeInput,
-  ): DeleteEpisodeOutput {
+  ): Promise<DeleteEpisodeOutput> {
     return this.podcastsService.deleteEpisode(deleteEpisodeInput);
   }
   @Query(() => GetEpisodeOutput)
   getEpisode(
     @Args('input') getEpisodeInput: GetEpisodeInput,
-  ): GetEpisodeOutput {
+  ): Promise<GetEpisodeOutput> {
     return this.podcastsService.getEpisode(getEpisodeInput);
   }
   @Mutation(() => UpdateEpisodeOutput)
   updateEpisode(
     @Args('input') updateEpisodeInput: UpdateEpisodeInput,
-  ): UpdateEpisodeOutput {
+  ): Promise<UpdateEpisodeOutput> {
     return this.podcastsService.updateEpisode(updateEpisodeInput);
   }
 }
