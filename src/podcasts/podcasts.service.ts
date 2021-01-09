@@ -40,7 +40,7 @@ export class PodcastsService {
   ) {}
   async getPodcasts(): Promise<GetPodcastsOutput> {
     try {
-      const data = await this.podcasts.find();
+      const data = await this.podcasts.find({ relations: ['episodes'] });
       return { ok: true, data };
     } catch (error) {
       return { ok: false, error };
@@ -62,7 +62,7 @@ export class PodcastsService {
   }
   async getPodcast({ id }: GetPodcastInput): Promise<GetPodcastOutput> {
     try {
-      const data = await this.podcasts.findOne(id);
+      const data = await this.podcasts.findOne(id, { relations: ['episodes'] });
       if (!data) {
         return { ok: false, error: `Podcast with ID ${id} not found.` };
       }
@@ -75,9 +75,14 @@ export class PodcastsService {
     id,
   }: DeletePodcastInput): Promise<DeletePodcastOutput> {
     try {
-      const podcast = await this.podcasts.findOne(id);
+      const podcast = await this.podcasts.findOne(id, {
+        relations: ['episodes'],
+      });
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${id} not found.` };
+      }
+      for (const episode of podcast.episodes) {
+        await this.episodes.delete(episode.id);
       }
       await this.podcasts.delete(id);
       return { ok: true };
@@ -87,11 +92,14 @@ export class PodcastsService {
   }
   async updatePodcast(input: UpdatePodcastInput): Promise<UpdatePodcastOutput> {
     try {
-      const podcast = await this.podcasts.findOne(input.id);
+      const podcast = await this.podcasts.findOne(input.id, {
+        relations: ['episodes'],
+      });
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${input.id} not found.` };
       }
-      const data = await this.podcasts.save(input);
+      console.log(input);
+      const data = await this.podcasts.save({ ...podcast, ...input });
       return { ok: true, data };
     } catch (error) {
       return { ok: false, error };
@@ -105,7 +113,8 @@ export class PodcastsService {
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${podcastId} not found.` };
       }
-      const data = await this.episodes.find({ podcast: podcast });
+      const data = await this.episodes.find({ relations: ['podcast'] });
+      console.log(data);
       return { ok: true, data };
     } catch (error) {
       return { ok: false, error };
@@ -120,6 +129,7 @@ export class PodcastsService {
           error: `Podcast with ID ${input.podcastId} not found.`,
         };
       }
+
       const episode = await this.episodes.create({
         title: input.title,
         description: input.description,
@@ -144,14 +154,14 @@ export class PodcastsService {
           error: `Podcast with ID ${podcastId} not found.`,
         };
       }
-      const episode = await this.episodes.findOne({ id: episodeId, podcast });
+      const episode = await this.episodes.findOne(episodeId);
       if (!episode) {
         return {
           ok: false,
           error: `Episode with ID ${episodeId} not found.`,
         };
       }
-      await this.episodes.delete({ id: episodeId, podcast });
+      await this.episodes.delete(episodeId);
       return { ok: true };
     } catch (error) {
       return { ok: false, error };
@@ -169,7 +179,9 @@ export class PodcastsService {
           error: `Podcast with ID ${podcastId} not found.`,
         };
       }
-      const data = await this.episodes.findOne({ id: episodeId, podcast });
+      const data = await this.episodes.findOne(episodeId, {
+        relations: ['podcast'],
+      });
       if (!data) {
         return {
           ok: false,
@@ -190,10 +202,7 @@ export class PodcastsService {
           error: `Podcast with ID ${input.podcastId} not found.`,
         };
       }
-      const episode = await this.episodes.findOne({
-        id: input.episodeId,
-        podcast,
-      });
+      const episode = await this.episodes.findOne(input.episodeId);
       if (!episode) {
         return {
           ok: false,
@@ -202,8 +211,7 @@ export class PodcastsService {
       }
       const data = {
         ...episode,
-        title: input.title,
-        description: input.description,
+        ...input,
       };
       this.episodes.save(data);
       return { ok: true, data };

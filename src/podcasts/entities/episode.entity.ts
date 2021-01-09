@@ -19,8 +19,7 @@ export class Episode extends CoreEntity {
   description: string;
 
   @ManyToOne(() => Podcast, (podcast) => podcast.episodes, {
-    onDelete: 'CASCADE',
-    eager: true,
+    cascade: true,
   })
   @Field(() => Podcast)
   @IsObject()

@@ -23,7 +23,9 @@ export class Podcast extends CoreEntity {
   @IsNumber()
   rating: number;
 
-  @OneToMany(() => Episode, (episode) => episode.podcast)
+  @OneToMany(() => Episode, (episode) => episode.podcast, {
+    onDelete: 'CASCADE',
+  })
   @Field(() => [Episode])
   @IsArray()
   episodes: Episode[];
