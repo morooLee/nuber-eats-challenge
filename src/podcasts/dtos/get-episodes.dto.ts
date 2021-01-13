@@ -13,5 +13,5 @@ export class GetEpisodesInput {
 @ObjectType()
 export class GetEpisodesOutput extends CoreOutput {
   @Field(() => [Episode], { nullable: true })
-  data?: Episode[];
+  episodes?: Episode[];
 }

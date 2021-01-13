@@ -13,5 +13,5 @@ export class UpdatePodcastInput extends PartialType(Podcast) {
 @ObjectType()
 export class UpdatePodcastOutput extends CoreOutput {
   @Field(() => Podcast, { nullable: true })
-  data?: Podcast;
+  podcast?: Podcast;
 }

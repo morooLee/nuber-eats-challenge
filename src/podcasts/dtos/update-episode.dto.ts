@@ -23,5 +23,5 @@ export class UpdateEpisodeInput extends PartialType(OmitType(Episode, ['id'])) {
 @ObjectType()
 export class UpdateEpisodeOutput extends CoreOutput {
   @Field(() => Episode, { nullable: true })
-  data?: Episode;
+  episode?: Episode;
 }

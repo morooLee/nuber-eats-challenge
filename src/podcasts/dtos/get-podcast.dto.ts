@@ -8,5 +8,5 @@ export class GetPodcastInput extends PickType(Podcast, ['id']) {}
 @ObjectType()
 export class GetPodcastOutput extends CoreOutput {
   @Field(() => Podcast, { nullable: true })
-  data?: Podcast;
+  podcast?: Podcast;
 }

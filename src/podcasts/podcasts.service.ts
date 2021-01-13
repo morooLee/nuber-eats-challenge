@@ -40,33 +40,35 @@ export class PodcastsService {
   ) {}
   async getPodcasts(): Promise<GetPodcastsOutput> {
     try {
-      const data = await this.podcasts.find({ relations: ['episodes'] });
-      return { ok: true, data };
+      const podcasts = await this.podcasts.find({ relations: ['episodes'] });
+      return { ok: true, podcasts };
     } catch (error) {
       return { ok: false, error };
     }
   }
   async createPodcast(input: CreatePodcastInput): Promise<CreatePodcastOutput> {
     try {
-      const podcast = await this.podcasts.create({
+      let podcast = await this.podcasts.create({
         ...input,
         rating: 0,
         episodes: [],
       });
-      const data = await this.podcasts.save(podcast);
+      podcast = await this.podcasts.save(podcast);
 
-      return { ok: true, data };
+      return { ok: true, podcast };
     } catch (error) {
       return { ok: false, error };
     }
   }
   async getPodcast({ id }: GetPodcastInput): Promise<GetPodcastOutput> {
     try {
-      const data = await this.podcasts.findOne(id, { relations: ['episodes'] });
-      if (!data) {
+      const podcast = await this.podcasts.findOne(id, {
+        relations: ['episodes'],
+      });
+      if (!podcast) {
         return { ok: false, error: `Podcast with ID ${id} not found.` };
       }
-      return { ok: true, data };
+      return { ok: true, podcast };
     } catch (error) {
       return { ok: false, error };
     }
@@ -92,15 +94,15 @@ export class PodcastsService {
   }
   async updatePodcast(input: UpdatePodcastInput): Promise<UpdatePodcastOutput> {
     try {
-      const podcast = await this.podcasts.findOne(input.id, {
+      let podcast = await this.podcasts.findOne(input.id, {
         relations: ['episodes'],
       });
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${input.id} not found.` };
       }
       console.log(input);
-      const data = await this.podcasts.save({ ...podcast, ...input });
-      return { ok: true, data };
+      podcast = await this.podcasts.save({ ...podcast, ...input });
+      return { ok: true, podcast };
     } catch (error) {
       return { ok: false, error };
     }
@@ -113,9 +115,8 @@ export class PodcastsService {
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${podcastId} not found.` };
       }
-      const data = await this.episodes.find({ relations: ['podcast'] });
-      console.log(data);
-      return { ok: true, data };
+      const episodes = await this.episodes.find({ relations: ['podcast'] });
+      return { ok: true, episodes };
     } catch (error) {
       return { ok: false, error };
     }
@@ -130,14 +131,14 @@ export class PodcastsService {
         };
       }
 
-      const episode = await this.episodes.create({
+      let episode = await this.episodes.create({
         title: input.title,
         description: input.description,
         podcast,
       });
-      const data = await this.episodes.save(episode);
+      episode = await this.episodes.save(episode);
 
-      return { ok: true, data };
+      return { ok: true, episode };
     } catch (error) {
       return { ok: false, error };
     }
@@ -179,16 +180,16 @@ export class PodcastsService {
           error: `Podcast with ID ${podcastId} not found.`,
         };
       }
-      const data = await this.episodes.findOne(episodeId, {
+      const episode = await this.episodes.findOne(episodeId, {
         relations: ['podcast'],
       });
-      if (!data) {
+      if (!episode) {
         return {
           ok: false,
           error: `Episode with ID ${episodeId} not found.`,
         };
       }
-      return { ok: true, data };
+      return { ok: true, episode };
     } catch (error) {
       return { ok: false, error };
     }
@@ -202,19 +203,19 @@ export class PodcastsService {
           error: `Podcast with ID ${input.podcastId} not found.`,
         };
       }
-      const episode = await this.episodes.findOne(input.episodeId);
+      let episode = await this.episodes.findOne(input.episodeId);
       if (!episode) {
         return {
           ok: false,
           error: `Episode with ID ${input.episodeId} not found.`,
         };
       }
-      const data = {
+      episode = {
         ...episode,
         ...input,
       };
-      this.episodes.save(data);
-      return { ok: true, data };
+      this.episodes.save(episode);
+      return { ok: true, episode };
     } catch (error) {
       return { ok: false, error };
     }

@@ -5,5 +5,5 @@ import { Podcast } from '../entities/podcast.entity';
 @ObjectType()
 export class GetPodcastsOutput extends CoreOutput {
   @Field(() => [Podcast], { nullable: true })
-  data?: Podcast[];
+  podcasts?: Podcast[];
 }

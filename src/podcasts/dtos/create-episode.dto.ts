@@ -16,5 +16,5 @@ export class CreateEpisodeInput extends PickType(Episode, [
 @ObjectType()
 export class CreateEpisodeOutput extends CoreOutput {
   @Field(() => Episode, { nullable: true })
-  data?: Episode;
+  episode?: Episode;
 }
