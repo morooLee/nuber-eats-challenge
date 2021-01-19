@@ -2,7 +2,6 @@ import {
   Field,
   InputType,
   ObjectType,
-  OmitType,
   PartialType,
   PickType,
 } from '@nestjs/graphql';
