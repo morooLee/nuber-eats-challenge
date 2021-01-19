@@ -24,6 +24,7 @@ export class Podcast extends CoreEntity {
   rating: number;
 
   @OneToMany(() => Episode, (episode) => episode.podcast, {
+    eager: true,
     onDelete: 'CASCADE',
   })
   @Field(() => [Episode])
