@@ -100,7 +100,6 @@ export class PodcastsService {
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${input.id} not found.` };
       }
-      console.log(input);
       podcast = await this.podcasts.save({ ...podcast, ...input });
       return { ok: true, podcast };
     } catch (error) {
@@ -214,7 +213,7 @@ export class PodcastsService {
         ...episode,
         ...input,
       };
-      this.episodes.save(episode);
+      episode = await this.episodes.save(episode);
       return { ok: true, episode };
     } catch (error) {
       return { ok: false, error };

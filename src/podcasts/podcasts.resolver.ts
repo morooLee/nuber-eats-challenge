@@ -37,79 +37,79 @@ export class PodcastsResolver {
 
   @Role(['Any'])
   @Query(() => GetPodcastsOutput)
-  getPodcasts(): Promise<GetPodcastsOutput> {
-    return this.podcastsService.getPodcasts();
+  async getPodcasts(): Promise<GetPodcastsOutput> {
+    return await this.podcastsService.getPodcasts();
   }
 
   @Role(['Host'])
   @Mutation(() => CreatePodcastOutput)
-  createPodcast(
+  async createPodcast(
     @Args('input') createPodcastInput: CreatePodcastInput,
   ): Promise<CreatePodcastOutput> {
-    return this.podcastsService.createPodcast(createPodcastInput);
+    return await this.podcastsService.createPodcast(createPodcastInput);
   }
 
   @Role(['Any'])
   @Query(() => GetPodcastOutput)
-  getPodcast(
+  async getPodcast(
     @Args('input') getPodcastInput: GetPodcastInput,
   ): Promise<GetPodcastOutput> {
-    return this.podcastsService.getPodcast(getPodcastInput);
+    return await this.podcastsService.getPodcast(getPodcastInput);
   }
 
   @Role(['Host'])
   @Mutation(() => DeletePodcastOutput)
-  deletePodcast(
+  async deletePodcast(
     @Args('input') deletePodcastInput: DeletePodcastInput,
   ): Promise<DeletePodcastOutput> {
-    return this.podcastsService.deletePodcast(deletePodcastInput);
+    return await this.podcastsService.deletePodcast(deletePodcastInput);
   }
 
   @Role(['Host'])
   @Mutation(() => UpdatePodcastOutput)
-  updatePodcast(
+  async updatePodcast(
     @Args('input') updatePodcastInput: UpdatePodcastInput,
   ): Promise<UpdatePodcastOutput> {
-    return this.podcastsService.updatePodcast(updatePodcastInput);
+    return await this.podcastsService.updatePodcast(updatePodcastInput);
   }
 
   @Role(['Any'])
   @Query(() => GetEpisodesOutput)
-  getEpisodes(
+  async getEpisodes(
     @Args('input') getEpisodesInput: GetEpisodesInput,
   ): Promise<GetEpisodesOutput> {
-    return this.podcastsService.getEpisodes(getEpisodesInput);
+    return await this.podcastsService.getEpisodes(getEpisodesInput);
   }
 
   @Role(['Host'])
   @Mutation(() => CreateEpisodeOutput)
-  createEpisode(
+  async createEpisode(
     @Args('input') createEpisodeInput: CreateEpisodeInput,
   ): Promise<CreateEpisodeOutput> {
-    return this.podcastsService.createEpisode(createEpisodeInput);
+    return await this.podcastsService.createEpisode(createEpisodeInput);
   }
 
   @Role(['Host'])
   @Mutation(() => DeleteEpisodeOutput)
-  deleteEpisode(
+  async deleteEpisode(
     @Args('input') deleteEpisodeInput: DeleteEpisodeInput,
   ): Promise<DeleteEpisodeOutput> {
-    return this.podcastsService.deleteEpisode(deleteEpisodeInput);
+    return await this.podcastsService.deleteEpisode(deleteEpisodeInput);
   }
 
   @Role(['Any'])
   @Query(() => GetEpisodeOutput)
-  getEpisode(
+  async getEpisode(
     @Args('input') getEpisodeInput: GetEpisodeInput,
   ): Promise<GetEpisodeOutput> {
-    return this.podcastsService.getEpisode(getEpisodeInput);
+    return await this.podcastsService.getEpisode(getEpisodeInput);
   }
 
   @Role(['Host'])
   @Mutation(() => UpdateEpisodeOutput)
-  updateEpisode(
+  async updateEpisode(
     @Args('input') updateEpisodeInput: UpdateEpisodeInput,
   ): Promise<UpdateEpisodeOutput> {
-    return this.podcastsService.updateEpisode(updateEpisodeInput);
+    return await this.podcastsService.updateEpisode(updateEpisodeInput);
   }
 }

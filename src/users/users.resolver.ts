@@ -5,7 +5,7 @@ import {
   CreateAccountOutput,
 } from './dtos/create-account.dto';
 import { SignInInput, SignInOutput } from './dtos/sign-in.dto';
-import { ProfileOutput } from './dtos/profile.dto';
+import { ProfileInput, ProfileOutput } from './dtos/profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import {
@@ -38,8 +38,8 @@ export class UsersResolver {
 
   @Role(['Any'])
   @Query(() => ProfileOutput)
-  async profile(@AuthUser() authUser: User): Promise<ProfileOutput> {
-    return await this.usersService.findById(authUser.id);
+  async profile(@Args() profileInput: ProfileInput): Promise<ProfileOutput> {
+    return await this.usersService.findById(profileInput.userId);
   }
 
   @Role(['Any'])
