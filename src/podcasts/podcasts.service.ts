@@ -114,7 +114,10 @@ export class PodcastsService {
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${podcastId} not found.` };
       }
-      const episodes = await this.episodes.find({ relations: ['podcast'] });
+      const episodes = await this.episodes.find({
+        where: { podcast: { id: podcastId } },
+        relations: ['podcast'],
+      });
       return { ok: true, episodes };
     } catch (error) {
       return { ok: false, error };

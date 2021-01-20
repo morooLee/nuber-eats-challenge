@@ -13,7 +13,7 @@ jest.mock('jsonwebtoken', () => {
   };
 });
 
-describe.skip('JwtService', () => {
+describe('JwtService', () => {
   let service: JwtService;
   beforeEach(async () => {
     const module = await Test.createTestingModule({

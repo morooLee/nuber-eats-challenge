@@ -18,7 +18,7 @@ const mockJwtService = {
 
 type MockRepository<T> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
-describe.skip('UsersService', () => {
+describe('UsersService', () => {
   let service: UsersService;
   let usersRepository: MockRepository<User>;
   let jwtService: JwtService;
