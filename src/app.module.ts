@@ -10,6 +10,7 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { AuthModule } from './auth/auth.module';
       type: process.env.DB_TYPE as any,
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
-      logging: process.env.NODE_ENV !== 'prod',
+      logging:
+        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       entities: [Podcast, Episode, User],
     }),
     GraphQLModule.forRoot({
@@ -46,6 +48,7 @@ import { AuthModule } from './auth/auth.module';
     PodcastsModule,
     UsersModule,
     AuthModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [],
