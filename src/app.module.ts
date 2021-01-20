@@ -10,7 +10,6 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { AuthModule } from './auth/auth.module';
-import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -48,7 +47,6 @@ import { CommonModule } from './common/common.module';
     PodcastsModule,
     UsersModule,
     AuthModule,
-    CommonModule,
   ],
   controllers: [],
   providers: [],
