@@ -4,6 +4,9 @@ import { JwtService } from 'src/jwt/jwt.service';
 import { Repository } from 'typeorm';
 import { UsersService } from './users.service';
 import { User, UserRole } from './entities/user.entity';
+import { Podcast } from 'src/podcasts/entities/podcast.entity';
+import { Episode } from 'src/podcasts/entities/episode.entity';
+import { PodcastsService } from 'src/podcasts/podcasts.service';
 
 const mockRepository = {
   findOne: jest.fn(),
@@ -27,8 +30,17 @@ describe('UsersService', () => {
     const module = await Test.createTestingModule({
       providers: [
         UsersService,
+        PodcastsService,
         {
           provide: getRepositoryToken(User),
+          useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(Podcast),
+          useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(Episode),
           useValue: mockRepository,
         },
         {

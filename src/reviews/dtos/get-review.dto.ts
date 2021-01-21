@@ -1,17 +1,17 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsNumber } from 'class-validator';
 import { CoreOutput } from 'src/common/dtos/output.dto';
-import { Episode } from '../entities/episode.entity';
+import { Review } from '../entities/review.entity';
 
 @InputType()
-export class GetEpisodeInput {
+export class GetReviewInput {
   @Field(() => Number)
   @IsNumber()
-  episodeId: number;
+  reviewId: number;
 }
 
 @ObjectType()
-export class GetEpisodeOutput extends CoreOutput {
-  @Field(() => Episode, { nullable: true })
-  episode?: Episode;
+export class GetReviewOutput extends CoreOutput {
+  @Field(() => Review, { nullable: true })
+  review?: Review;
 }

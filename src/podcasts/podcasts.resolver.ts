@@ -21,6 +21,10 @@ import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import {
+  SearchPodcastsInput,
+  SearchPodcastsOutput,
+} from './dtos/search-podcasts.dto';
+import {
   UpdateEpisodeInput,
   UpdateEpisodeOutput,
 } from './dtos/update-episode.dto';
@@ -111,5 +115,13 @@ export class PodcastsResolver {
     @Args('input') updateEpisodeInput: UpdateEpisodeInput,
   ): Promise<UpdateEpisodeOutput> {
     return await this.podcastsService.updateEpisode(updateEpisodeInput);
+  }
+
+  @Role(['Any'])
+  @Query(() => SearchPodcastsOutput)
+  async searchPodcasts(
+    @Args('input') searchPodcastsInput: SearchPodcastsInput,
+  ): Promise<SearchPodcastsOutput> {
+    return await this.podcastsService.searchPodcasts(searchPodcastsInput);
   }
 }

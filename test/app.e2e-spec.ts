@@ -582,6 +582,16 @@ describe('AppController (e2e)', () => {
                   title
                   category
                   rating
+                  reviews {
+                    id
+                    user {
+                      id
+                    }
+                    podcast {
+                      id
+                    }
+                    content
+                  }
                   episodes {
                     id
                     title
@@ -606,6 +616,7 @@ describe('AppController (e2e)', () => {
                 title: testPodcast.title,
                 category: testPodcast.category,
                 rating: 0,
+                reviews: [],
                 episodes: [],
               });
             });
@@ -688,6 +699,16 @@ describe('AppController (e2e)', () => {
                   title
                   category
                   rating
+                  reviews {
+                    id
+                    user {
+                      id
+                    }
+                    podcast {
+                      id
+                    }
+                    content
+                  }
                   episodes {
                     id
                     title
@@ -714,6 +735,7 @@ describe('AppController (e2e)', () => {
                   title: testPodcast.title,
                   category: testPodcast.category,
                   rating: 0,
+                  reviews: [],
                   episodes: [],
                 },
               ]);
@@ -730,6 +752,16 @@ describe('AppController (e2e)', () => {
                   title
                   category
                   rating
+                  reviews {
+                    id
+                    user {
+                      id
+                    }
+                    podcast {
+                      id
+                    }
+                    content
+                  }
                   episodes {
                     id
                     title
@@ -756,6 +788,7 @@ describe('AppController (e2e)', () => {
                   title: testPodcast.title,
                   category: testPodcast.category,
                   rating: 0,
+                  reviews: [],
                   episodes: [],
                 },
               ]);
@@ -1527,7 +1560,6 @@ describe('AppController (e2e)', () => {
           return privateTest(`
             {
               getEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
               }) {
                 ok
@@ -1567,7 +1599,6 @@ describe('AppController (e2e)', () => {
           return privateTest(`
             {
               getEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
               }) {
                 ok
@@ -1606,7 +1637,6 @@ describe('AppController (e2e)', () => {
           return publicTest(`
             {
               getEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
               }) {
                 ok
@@ -1631,43 +1661,10 @@ describe('AppController (e2e)', () => {
               expect(error.message).toBe('Forbidden resource');
             });
         });
-        it('should fail if podcast not found', async () => {
-          return privateTest(`
-            {
-              getEpisode(input: {
-                podcastId: 0
-                episodeId: ${episode.id}
-              }) {
-                ok
-                episode {
-                  id
-                  title
-                  description
-                  podcast {
-                    id
-                  }
-                }
-                error
-              }
-            }
-          `)
-            .expect(200)
-            .expect((res) => {
-              const {
-                body: {
-                  data: { getEpisode },
-                },
-              } = res;
-              expect(getEpisode.ok).toBe(false);
-              expect(getEpisode.episode).toBe(null);
-              expect(getEpisode.error).toBe('Podcast with ID 0 not found.');
-            });
-        });
         it('should fail if episode not found', async () => {
           return privateTest(`
             {
               getEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: 0
               }) {
                 ok
@@ -1706,7 +1703,6 @@ describe('AppController (e2e)', () => {
           return privateTest(`
             mutation {
               updateEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
                 title: "${newEpisode.title}"
                 description: "${newEpisode.description}"
@@ -1737,42 +1733,10 @@ describe('AppController (e2e)', () => {
               });
             });
         });
-        it('should fail if podcast not found', () => {
-          return privateTest(`
-            mutation {
-              updateEpisode(input: {
-                podcastId: 0
-                episodeId: ${episode.id}
-                title: "${newEpisode.title}"
-                description: "${newEpisode.description}"
-              }) {
-                ok
-                episode {
-                  id
-                  title
-                  description
-                }
-                error
-              }
-            }
-          `)
-            .expect(200)
-            .expect((res) => {
-              const {
-                body: {
-                  data: { updateEpisode },
-                },
-              } = res;
-              expect(updateEpisode.ok).toBe(false);
-              expect(updateEpisode.episode).toBe(null);
-              expect(updateEpisode.error).toBe('Podcast with ID 0 not found.');
-            });
-        });
         it('should fail if episode not found', () => {
           return privateTest(`
             mutation {
               updateEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: 0
                 title: "${newEpisode.title}"
                 description: "${newEpisode.description}"
@@ -1804,7 +1768,6 @@ describe('AppController (e2e)', () => {
           return privateTest(`
             mutation {
               updateEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
                 title: "${newEpisode.title}"
                 description: "${newEpisode.description}"
@@ -1832,7 +1795,6 @@ describe('AppController (e2e)', () => {
           return publicTest(`
             mutation {
               updateEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
                 title: "${newEpisode.title}"
                 description: "${newEpisode.description}"
@@ -1862,7 +1824,6 @@ describe('AppController (e2e)', () => {
           return publicTest(`
             mutation {
               deleteEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
               }) {
                 ok
@@ -1884,7 +1845,6 @@ describe('AppController (e2e)', () => {
           return privateTest(`
             mutation {
               deleteEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
               }) {
                 ok
@@ -1901,36 +1861,11 @@ describe('AppController (e2e)', () => {
               expect(error.message).toBe('Forbidden resource');
             });
         });
-        it('should fail if podcast not found', () => {
-          jwtToken = hostToken;
-          return privateTest(`
-            mutation {
-              deleteEpisode(input: {
-                podcastId: 0
-                episodeId: ${episode.id}
-              }) {
-                ok
-                error
-              }
-            }
-          `)
-            .expect(200)
-            .expect((res) => {
-              const {
-                body: {
-                  data: { deleteEpisode },
-                },
-              } = res;
-              expect(deleteEpisode.ok).toBe(false);
-              expect(deleteEpisode.error).toBe('Podcast with ID 0 not found.');
-            });
-        });
         it('should fail if episode not found', () => {
           jwtToken = hostToken;
           return privateTest(`
             mutation {
               deleteEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: 0
               }) {
                 ok
@@ -1954,7 +1889,6 @@ describe('AppController (e2e)', () => {
           return privateTest(`
             mutation {
               deleteEpisode(input: {
-                podcastId: ${podcast.id}
                 episodeId: ${episode.id}
               }) {
                 ok

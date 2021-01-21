@@ -14,10 +14,6 @@ export class UpdateEpisodeInput extends PartialType(OmitType(Episode, ['id'])) {
   @Field(() => Number)
   @IsNumber()
   episodeId: number;
-
-  @Field(() => Number)
-  @IsNumber()
-  podcastId: number;
 }
 
 @ObjectType()

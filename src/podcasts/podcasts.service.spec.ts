@@ -299,33 +299,18 @@ describe('PodcastsService', () => {
   });
   describe('deleteEpisode', () => {
     it('should delete episode', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockResolvedValue(
         mockedPodcasts[0].episodes[0],
       );
       episodesRepository.delete.mockResolvedValue({ ok: true });
       const result = await service.deleteEpisode({
-        podcastId: 1,
         episodeId: 1,
       });
       expect(result).toEqual({ ok: true });
     });
-    it('should fail if podcast not found', async () => {
-      podcastsRepository.findOne.mockResolvedValue(undefined);
-      const result = await service.deleteEpisode({
-        podcastId: 1,
-        episodeId: 1,
-      });
-      expect(result).toEqual({
-        ok: false,
-        error: 'Podcast with ID 1 not found.',
-      });
-    });
     it('should fail if episode not found', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockResolvedValue(undefined);
       const result = await service.deleteEpisode({
-        podcastId: 1,
         episodeId: 1,
       });
       expect(result).toEqual({
@@ -334,12 +319,10 @@ describe('PodcastsService', () => {
       });
     });
     it('should fail on exception', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockRejectedValue(
         new Error('Exception error occurred.'),
       );
       const result = await service.deleteEpisode({
-        podcastId: 1,
         episodeId: 1,
       });
       expect(result).toEqual({
@@ -350,39 +333,28 @@ describe('PodcastsService', () => {
   });
   describe('getEpisode', () => {
     it('should get episode', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockResolvedValue(
         mockedPodcasts[0].episodes[0],
       );
-      const result = await service.getEpisode({ podcastId: 1, episodeId: 1 });
+      const result = await service.getEpisode({ episodeId: 1 });
       expect(result).toEqual({
         ok: true,
         episode: mockedPodcasts[0].episodes[0],
       });
     });
-    it('should fail if podcast not found', async () => {
-      podcastsRepository.findOne.mockResolvedValue(undefined);
-      const result = await service.getEpisode({ podcastId: 1, episodeId: 1 });
-      expect(result).toEqual({
-        ok: false,
-        error: 'Podcast with ID 1 not found.',
-      });
-    });
     it('should fail if episode not found', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockResolvedValue(undefined);
-      const result = await service.getEpisode({ podcastId: 1, episodeId: 1 });
+      const result = await service.getEpisode({ episodeId: 1 });
       expect(result).toEqual({
         ok: false,
         error: 'Episode with ID 1 not found.',
       });
     });
     it('should fail on exception', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockRejectedValue(
         new Error('Exception error occurred.'),
       );
-      const result = await service.getEpisode({ podcastId: 1, episodeId: 1 });
+      const result = await service.getEpisode({ episodeId: 1 });
       expect(result).toEqual({
         ok: false,
         error: Error('Exception error occurred.'),
@@ -400,8 +372,7 @@ describe('PodcastsService', () => {
       episodeId: newEpisode.id,
       ...newEpisode,
     };
-    it('should update podcast', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
+    it('should update episode', async () => {
       episodesRepository.findOne.mockResolvedValue(
         mockedPodcasts[0].episodes[0],
       );
@@ -415,16 +386,7 @@ describe('PodcastsService', () => {
         episode: { ...mockedPodcasts[0].episodes[0], ...newEpisode },
       });
     });
-    it('should fail if podcast not found', async () => {
-      podcastsRepository.findOne.mockResolvedValue(undefined);
-      const result = await service.updateEpisode(updateEpisodeArgs);
-      expect(result).toEqual({
-        ok: false,
-        error: 'Podcast with ID 1 not found.',
-      });
-    });
     it('should fail if episode not found', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockResolvedValue(undefined);
       const result = await service.updateEpisode(updateEpisodeArgs);
       expect(result).toEqual({
@@ -433,7 +395,6 @@ describe('PodcastsService', () => {
       });
     });
     it('should fail on exception', async () => {
-      podcastsRepository.findOne.mockResolvedValue(mockedPodcasts[0]);
       episodesRepository.findOne.mockResolvedValue(
         mockedPodcasts[0].episodes[0],
       );

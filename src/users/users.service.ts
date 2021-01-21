@@ -13,11 +13,30 @@ import {
   UpdateProfileInput,
   UpdateProfileOutput,
 } from './dtos/update-profile.dto';
+import {
+  SubscribeToPodcastInput,
+  SubscribeToPodcastOutput,
+} from 'src/users/dtos/subscribe-podcast.dto';
+import { PodcastsService } from 'src/podcasts/podcasts.service';
+import { GetSubscriptionsOutput } from './dtos/get-subscriptions.dto';
+import {
+  GetSubscriptionInput,
+  GetSubscriptionOutput,
+} from './dtos/get-subscription.dto';
+import {
+  CancelSubscriptionInput,
+  CancelSubscriptionOutput,
+} from './dtos/cancel-subscription.dto';
+import {
+  AddPlayedEpisodeInput,
+  AddPlayedEpisodeOutput,
+} from './dtos/add-playedEpisode.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly podcastsService: PodcastsService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -97,6 +116,160 @@ export class UsersService {
         ok: true,
         user,
       };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async subscribeToPodcast(
+    userId: number,
+    { podcastId }: SubscribeToPodcastInput,
+  ): Promise<SubscribeToPodcastOutput> {
+    try {
+      const findUserResult = await this.findById(userId);
+      if (!findUserResult.ok) {
+        return findUserResult;
+      }
+
+      const getPodcastResult = await this.podcastsService.getPodcast({
+        id: podcastId,
+      });
+      if (!getPodcastResult.ok) {
+        return getPodcastResult;
+      }
+
+      const findAlreaySubscribed = findUserResult.user.subscribePodcasts.find(
+        (podcast) => podcast.id === podcastId,
+      );
+      if (findAlreaySubscribed) {
+        return { ok: false, error: 'Already subscribed.' };
+      }
+
+      await this.users.save({
+        ...findUserResult.user,
+        subscribePodcasts: [
+          ...findUserResult.user.subscribePodcasts,
+          getPodcastResult.podcast,
+        ],
+      });
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async getSubscriptions(userId: number): Promise<GetSubscriptionsOutput> {
+    try {
+      const findUserResult = await this.findById(userId);
+      if (!findUserResult.ok) {
+        return findUserResult;
+      }
+      const podcasts = findUserResult.user.subscribePodcasts;
+
+      return { ok: true, podcasts };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async getSubscription(
+    userId: number,
+    { podcastId }: GetSubscriptionInput,
+  ): Promise<GetSubscriptionOutput> {
+    try {
+      const findUserResult = await this.findById(userId);
+      if (!findUserResult.ok) {
+        return findUserResult;
+      }
+
+      const getPodcastResult = await this.podcastsService.getPodcast({
+        id: podcastId,
+      });
+      if (!getPodcastResult.ok) {
+        return getPodcastResult;
+      }
+
+      const findAlreaySubscribed = findUserResult.user.subscribePodcasts.find(
+        (podcast) => podcast.id === podcastId,
+      );
+      if (!findAlreaySubscribed) {
+        return { ok: false, error: 'User not subscribed.' };
+      }
+
+      return { ok: true, podcast: findAlreaySubscribed };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async cancelSubscription(
+    userId: number,
+    { podcastId }: CancelSubscriptionInput,
+  ): Promise<CancelSubscriptionOutput> {
+    try {
+      const findUserResult = await this.findById(userId);
+      if (!findUserResult.ok) {
+        return findUserResult;
+      }
+
+      const getPodcastResult = await this.podcastsService.getPodcast({
+        id: podcastId,
+      });
+      if (!getPodcastResult.ok) {
+        return getPodcastResult;
+      }
+
+      const findIndex = findUserResult.user.subscribePodcasts.findIndex(
+        (podcast) => podcast.id === podcastId,
+      );
+      if (findIndex === -1) {
+        return { ok: false, error: 'User not subscribed.' };
+      }
+
+      findUserResult.user.subscribePodcasts.splice(findIndex, 1);
+      await this.users.save({
+        ...findUserResult.user,
+      });
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async addPlayedEpisode(
+    userId: number,
+    { episodeId }: AddPlayedEpisodeInput,
+  ): Promise<AddPlayedEpisodeOutput> {
+    try {
+      const findUserResult = await this.findById(userId);
+      if (!findUserResult.ok) {
+        return findUserResult;
+      }
+
+      const getEpisodeResult = await this.podcastsService.getEpisode({
+        episodeId,
+      });
+      if (!getEpisodeResult.ok) {
+        return getEpisodeResult;
+      }
+
+      const findAlreayPlayedEpisoe = findUserResult.user.playedEpisodes.find(
+        (episode) => episode.id === episodeId,
+      );
+      if (findAlreayPlayedEpisoe) {
+        return { ok: false, error: 'Already played.' };
+      }
+
+      await this.users.save({
+        ...findUserResult.user,
+        playedEpisodes: [
+          ...findUserResult.user.playedEpisodes,
+          getEpisodeResult.episode,
+        ],
+      });
+      return { ok: true };
     } catch (error) {
       return { ok: false, error };
     }
