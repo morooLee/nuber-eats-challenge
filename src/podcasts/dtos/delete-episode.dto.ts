@@ -7,10 +7,6 @@ export class DeleteEpisodeInput {
   @Field(() => Number)
   @IsNumber()
   episodeId: number;
-
-  @Field(() => Number)
-  @IsNumber()
-  podcastId: number;
 }
 
 @ObjectType()

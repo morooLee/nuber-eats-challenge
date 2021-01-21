@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { AuthModule } from './auth/auth.module';
+import { Review } from './reviews/entities/review.entity';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: process.env.NODE_ENV !== 'prod',
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      entities: [Podcast, Episode, User],
+      entities: [Podcast, Episode, User, Review],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -47,6 +49,7 @@ import { AuthModule } from './auth/auth.module';
     PodcastsModule,
     UsersModule,
     AuthModule,
+    ReviewsModule,
   ],
   controllers: [],
   providers: [],

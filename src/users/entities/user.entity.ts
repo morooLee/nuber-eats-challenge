@@ -4,11 +4,14 @@ import {
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
-import { IsEmail, IsEnum, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { BeforeInsert, BeforeUpdate, Column, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
+import { Podcast } from 'src/podcasts/entities/podcast.entity';
+import { Episode } from 'src/podcasts/entities/episode.entity';
+import { Review } from 'src/reviews/entities/review.entity';
 
 // type UserRole = 'user' | 'podcast';
 
@@ -18,7 +21,7 @@ export enum UserRole {
 }
 registerEnumType(UserRole, { name: 'UserRole' });
 
-@InputType({ isAbstract: true })
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
@@ -36,6 +39,21 @@ export class User extends CoreEntity {
   @Field(() => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
+
+  @OneToMany(() => Podcast, (podcast) => podcast.id)
+  @Field(() => [Podcast])
+  @IsArray()
+  subscribePodcasts: Podcast[];
+
+  @OneToMany(() => Episode, (episode) => episode.id)
+  @Field(() => [Episode])
+  @IsArray()
+  playedEpisodes: Episode[];
+
+  @OneToMany(() => Review, (review) => review.user)
+  @Field(() => [Review])
+  @IsArray()
+  reviews: Review[];
 
   @BeforeInsert()
   @BeforeUpdate()

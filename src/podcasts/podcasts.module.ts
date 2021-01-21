@@ -8,5 +8,6 @@ import { PodcastsService } from './podcasts.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Podcast, Episode])],
   providers: [PodcastsResolver, PodcastsService],
+  exports: [PodcastsService],
 })
 export class PodcastsModule {}

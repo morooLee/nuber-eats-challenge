@@ -13,6 +13,23 @@ import {
   UpdateProfileOutput,
 } from './dtos/update-profile.dto';
 import { Role } from 'src/auth/role.decorator';
+import {
+  SubscribeToPodcastInput,
+  SubscribeToPodcastOutput,
+} from 'src/users/dtos/subscribe-podcast.dto';
+import { GetSubscriptionsOutput } from 'src/users/dtos/get-subscriptions.dto';
+import {
+  GetSubscriptionInput,
+  GetSubscriptionOutput,
+} from './dtos/get-subscription.dto';
+import {
+  CancelSubscriptionInput,
+  CancelSubscriptionOutput,
+} from './dtos/cancel-subscription.dto';
+import {
+  AddPlayedEpisodeInput,
+  AddPlayedEpisodeOutput,
+} from './dtos/add-playedEpisode.dto';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -51,6 +68,62 @@ export class UsersResolver {
     return await this.usersService.updateProfile(
       authUser.id,
       updateProfileInput,
+    );
+  }
+
+  @Role(['Any'])
+  @Mutation(() => SubscribeToPodcastOutput)
+  async subscribeToPodcast(
+    @AuthUser() authUser: User,
+    @Args('input') subscribeToPodcastInput: SubscribeToPodcastInput,
+  ): Promise<SubscribeToPodcastOutput> {
+    return await this.usersService.subscribeToPodcast(
+      authUser.id,
+      subscribeToPodcastInput,
+    );
+  }
+
+  @Role(['Any'])
+  @Query(() => GetSubscriptionsOutput)
+  async getSubscriptions(
+    @AuthUser() authUser: User,
+  ): Promise<GetSubscriptionsOutput> {
+    return await this.usersService.getSubscriptions(authUser.id);
+  }
+
+  @Role(['Any'])
+  @Query(() => GetSubscriptionOutput)
+  async getSubscription(
+    @AuthUser() authUser: User,
+    @Args('input') getSubscriptionInput: GetSubscriptionInput,
+  ): Promise<GetSubscriptionOutput> {
+    return await this.usersService.getSubscription(
+      authUser.id,
+      getSubscriptionInput,
+    );
+  }
+
+  @Role(['Any'])
+  @Mutation(() => CancelSubscriptionOutput)
+  async cancelSubscription(
+    @AuthUser() authUser: User,
+    @Args('input') cancelSubscriptionInput: CancelSubscriptionInput,
+  ): Promise<CancelSubscriptionOutput> {
+    return await this.usersService.cancelSubscription(
+      authUser.id,
+      cancelSubscriptionInput,
+    );
+  }
+
+  @Role(['Any'])
+  @Mutation(() => AddPlayedEpisodeOutput)
+  async addPlayedEpisode(
+    @AuthUser() authUser: User,
+    @Args('input') addPlayedEpisodeInput: AddPlayedEpisodeInput,
+  ): Promise<AddPlayedEpisodeOutput> {
+    return await this.usersService.addPlayedEpisode(
+      authUser.id,
+      addPlayedEpisodeInput,
     );
   }
 }

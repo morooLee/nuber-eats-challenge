@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import {
   CreateEpisodeInput,
   CreateEpisodeOutput,
@@ -22,6 +22,10 @@ import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import {
+  SearchPodcastsInput,
+  SearchPodcastsOutput,
+} from './dtos/search-podcasts.dto';
+import {
   UpdateEpisodeInput,
   UpdateEpisodeOutput,
 } from './dtos/update-episode.dto';
@@ -40,7 +44,9 @@ export class PodcastsService {
   ) {}
   async getPodcasts(): Promise<GetPodcastsOutput> {
     try {
-      const podcasts = await this.podcasts.find({ relations: ['episodes'] });
+      const podcasts = await this.podcasts.find({
+        relations: ['episodes', 'reviews'],
+      });
       return { ok: true, podcasts };
     } catch (error) {
       return { ok: false, error };
@@ -51,6 +57,7 @@ export class PodcastsService {
       let podcast = await this.podcasts.create({
         ...input,
         rating: 0,
+        reviews: [],
         episodes: [],
       });
       podcast = await this.podcasts.save(podcast);
@@ -63,7 +70,7 @@ export class PodcastsService {
   async getPodcast({ id }: GetPodcastInput): Promise<GetPodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne(id, {
-        relations: ['episodes'],
+        relations: ['episodes', 'reviews'],
       });
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${id} not found.` };
@@ -78,7 +85,7 @@ export class PodcastsService {
   }: DeletePodcastInput): Promise<DeletePodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne(id, {
-        relations: ['episodes'],
+        relations: ['episodes', 'reviews'],
       });
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${id} not found.` };
@@ -95,7 +102,7 @@ export class PodcastsService {
   async updatePodcast(input: UpdatePodcastInput): Promise<UpdatePodcastOutput> {
     try {
       let podcast = await this.podcasts.findOne(input.id, {
-        relations: ['episodes'],
+        relations: ['episodes', 'reviews'],
       });
       if (!podcast) {
         return { ok: false, error: `Podcast with ID ${input.id} not found.` };
@@ -146,17 +153,9 @@ export class PodcastsService {
     }
   }
   async deleteEpisode({
-    podcastId,
     episodeId,
   }: DeleteEpisodeInput): Promise<DeleteEpisodeOutput> {
     try {
-      const podcast = await this.podcasts.findOne(podcastId);
-      if (!podcast) {
-        return {
-          ok: false,
-          error: `Podcast with ID ${podcastId} not found.`,
-        };
-      }
       const episode = await this.episodes.findOne(episodeId);
       if (!episode) {
         return {
@@ -170,18 +169,8 @@ export class PodcastsService {
       return { ok: false, error };
     }
   }
-  async getEpisode({
-    podcastId,
-    episodeId,
-  }: GetEpisodeInput): Promise<GetEpisodeOutput> {
+  async getEpisode({ episodeId }: GetEpisodeInput): Promise<GetEpisodeOutput> {
     try {
-      const podcast = await this.podcasts.findOne(podcastId);
-      if (!podcast) {
-        return {
-          ok: false,
-          error: `Podcast with ID ${podcastId} not found.`,
-        };
-      }
       const episode = await this.episodes.findOne(episodeId, {
         relations: ['podcast'],
       });
@@ -198,13 +187,6 @@ export class PodcastsService {
   }
   async updateEpisode(input: UpdateEpisodeInput): Promise<UpdateEpisodeOutput> {
     try {
-      const podcast = await this.podcasts.findOne(input.podcastId);
-      if (!podcast) {
-        return {
-          ok: false,
-          error: `Podcast with ID ${input.podcastId} not found.`,
-        };
-      }
       let episode = await this.episodes.findOne(input.episodeId);
       if (!episode) {
         return {
@@ -218,6 +200,20 @@ export class PodcastsService {
       };
       episode = await this.episodes.save(episode);
       return { ok: true, episode };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async searchPodcasts(
+    search: SearchPodcastsInput,
+  ): Promise<SearchPodcastsOutput> {
+    try {
+      const podcasts = await this.podcasts.find({
+        where: { title: Like(search) },
+      });
+
+      return { ok: true, podcasts };
     } catch (error) {
       return { ok: false, error };
     }
